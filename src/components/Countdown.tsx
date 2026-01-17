@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Sparkles, Star } from "lucide-react";
+import confetti from "canvas-confetti";
 
 interface CountdownProps {
   onComplete: () => void;
@@ -9,9 +10,48 @@ interface CountdownProps {
 const Countdown = ({ onComplete }: CountdownProps) => {
   const [count, setCount] = useState(10);
 
+  const launchFirecrackers = () => {
+    const duration = 2000;
+    const end = Date.now() + duration;
+
+    const colors = ['#ff69b4', '#ffb6c1', '#ffc0cb', '#ff1493', '#ff85a2', '#ffd700'];
+
+    const frame = () => {
+      confetti({
+        particleCount: 3,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.8 },
+        colors: colors,
+      });
+      confetti({
+        particleCount: 3,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.8 },
+        colors: colors,
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    };
+
+    // Initial burst
+    confetti({
+      particleCount: 100,
+      spread: 100,
+      origin: { y: 0.6 },
+      colors: colors,
+    });
+
+    frame();
+  };
+
   useEffect(() => {
     if (count === 0) {
-      setTimeout(onComplete, 500);
+      launchFirecrackers();
+      setTimeout(onComplete, 2000);
       return;
     }
 
